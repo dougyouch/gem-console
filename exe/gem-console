@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+def get_gemspec(path)
+  Dir.glob("#{path}/*.gemspec").first
+end
+
+path = Dir.pwd
+gemspec_file = get_gemspec(path)
+while ! gemspec_file && path != '/'
+  path = File.dirname(path)
+  gemspec_file = get_gemspec(path)
+end
+
+raise("unable to locate a gemspec file from #{Dir.pwd}") unless gemspec_file
+
+$LOAD_PATH << File.expand_path('../lib', gemspec_file)
+require File.basename(gemspec_file).split('.', 2).first
+require 'irb'
+
+IRB.start(__FILE__)
